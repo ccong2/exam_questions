@@ -1,8 +1,8 @@
 ---
 title: "Exam Questions"
-author: "11.118/11.218 Fall 2025"
-date: "10/15/2025"
-format: 
+author: "11.118/11.218 Fall 2026"
+date: "10/15/2026"
+format:
   html:
     embed-resources: true
 editor: visual
@@ -13,136 +13,121 @@ editor: visual
 
 This exam has **4 questions, 10 points each**. All necessary data files for this exam are uploaded to Canvas. You will use Quarto (`.qmd`) document to work on the question. When you finish, please **upload both your `.qmd` and rendered `.html` files** to the **“Midterm Exam” assignment** submission link on Canvas.
 
-You have **90 minutes** to complete the exam, and practically: \[Group 1\] 9:35am – 11:05am; \[Group 2\] 11:05pm – 12:35pm.
+You have **90 minutes** to complete the exam from 9:30AM to 11:00AM.
 
 Start your work in a Quarto document. To ensure that your rendered HTML includes all image outputs, copy and edit the following into your YAML header:
 
 ```{verbatim}
 title: "Exam Answers"
 author: "<Your Name>"
-format: 
+format:
   html:
     embed-resources: true
-execute: 
+execute:
   warning: false
 ```
 
-For the questions, please write out all your code you used, and include a clear statement of your final answer to a question. If you didn't complete a section, describe your problem-solving approach instead, i.e. explain what you intended to do and your reasoning.
+For the questions, please write out all your code you used, and include a clear final answer to a question. If you didn't complete a section, describe your problem-solving approach instead, i.e. explain what you intended to do and your reasoning.
 :::
 
 ### Question 1: Cleaning and Transforming
 
-You are provided with a CSV file named `q1_infant_hiv.csv`. It records the estimated percentage of infants born to women living with HIV who received a HIV test within two months of birth, for each country or region and each year.
+You are given `q1_forest_area.csv`, which records the forest area of 80 countries over time. Each row is one country in one year. It has four columns:
 
-The data is formatted as follows:
-
--   The first column contains [ISO3 country codes](https://www.iso.org/iso-3166-country-codes.html) for 192 countries.
--   For each year from 2009 to 2017 (9 years in total), there are three columns (estimated percentage, lower bound, upper bound)
--   A dash (`-`) indicates missing data.
--   The analyst tells us that the value `>95%` means “the data is unreliable”.
+-   `country`: Country name
+-   `code`: 3-letter country code
+-   `year`: Year of the record
+-   `forest_area_ha`: Forest area in hectares
 
 Questions:
 
-1.  First, clean the dataset by finding a way to replace all the missing and unreliable values with NA. (5 points).
-2.  After cleaning, How many countries have available estimates (`est`) for all 9 years from 2009 to 2017? (2.5 points)
-3.  What is the average estimated percentage (`est`) for Azerbaijan (AZE) over the 9 years? (2.5 points)
+1.  Filter the data for **Angola**. How many years of records does Angola have, and what are the first and last years? Then do the same for **Belgium**. (1 point)
 
-You can complete these tasks in multiple steps or create intermediate results as needed.
+2.  Not every country has a record for every year. Create **one summary table** that counts the number of years recorded for each country. Using this table, list all countries with **fewer than 31 years** of records. (2 points)
+
+3.  Back to the original table, for the year **2020** only, which **3 countries** have the largest forest area? (2 points)
+
+4.  Use the original table, keep only the years **1990 and 2020**, then use `pivot_wider()` to reshape the data so that each country is one row, with one column for 1990 forest area and one column for 2020 forest area. Your result should have 4 columns. Call this table `forest_wide`. (2.5 points)
+
+5.  Using `forest_wide`, create a new column for the **change in forest area from 1990 to 2020**. Remove countries with a missing value (`NA`) in this column. Which country had the **largest decrease** in forest area during the 30 years? (2.5 points)
 
 ::: footnote
-Data source: UNICEF. (2017). [Early Infant Diagnosis](https://data.unicef.org/wp-content/uploads/2017/12/Infant_HIV_Testing_2017.xlsx).
+Data source: Forests and Deforestation in [Our World in Data](https://ourworldindata.org/forests-and-deforestation). Adapted dataset from [TidyTuesday](https://github.com/cnicault/tidytuesday) [2021-15 Global Deforestation](https://github.com/cnicault/tidytuesday/tree/master/2021/2021-15-global_deforestation).
 :::
 
 ------------------------------------------------------------------------
 
 ### Question 2: Summarizing and Plotting
 
-**Q2.1:** Bluebikes is Metro Boston's public bike share program. You are given a Bluebikes ridership dataset `q2_bike_trips.csv`. Each row represents a single trip, including information on start time, end time, start station, and end station. The dataset covers trips taken on September 3, 2025, the first day of our fall semester.
+Bluebikes is Metro Boston's public bike share program. You are given a Bluebikes ridership dataset `q2_bike_trips.csv`. Each row represents a single trip, including its start time (`started_at`), end time (`ended_at`), start station, end station, and rider type (`member_casual`: `"member"` or `"casual"`). The dataset covers all trips taken on **Wednesday, September 9, 2026**, the first day of our fall semester.
 
-Your tasks:
+**Q2.1**
 
--   Calculate how many trips occurred within each hour of the day. Use the `lubridate` package, focus on the `started_at` column (2 points).
--   After you have that, create a graph showing the number of trips per hour. (4 points).
+1.  Filter for all trips that **started** at the station **“MIT at Mass Ave / Amherst St”**. Save the result as a new table, e.g. `mit_trips`. (1 point)
 
-Your graph will look similar to the follow example, but [your actual results will be different]{.underline}.
+2.  The last two columns of the data, `started_hour` and `ended_hour`, give the hour (0-23) in which each trip started and ended. Using `started_hour`, create a **line graph** that shows the number of trips by hour at this station, with **two lines**: one for member riders and one for casual riders. **Include a title and x-axis tick labels by hour.** (7 points)
 
-![](images/q2.png){width="600"}
+Your graph may look similar (but not the same!) as the following example. Your theme, color and text choices can be different.
 
-**Q2.2:** After completing Q2.1, you will have identified the **busiest hour** of the day (the hour with the most starting trips). Following on that:
+![](images/q2_example.png){width="700"}
 
--   Single out all trips that occurred during this busiest hour. (2 points).
--   Count the number of trips **starting at each station** during this hour. When you have this result, remove stations with less than 10 trips (2 points).
+**Q2.2** Continue using `mit_trips` (all trips that started at “MIT at Mass Ave / Amherst St”).
+
+1.  Create a table that shows how many trips **ended** at each station. In other words, count by `end_station_id`. Keep only the end stations with **more than 1 trip** (i.e., `n > 1`). You will use this result in Question 3. (2 point)
 
 ::: footnote
-Data source: Bluebikes System Data. (2025). [Bluebikes Comprehensive Trip Histories](https://bluebikes.com/system-data).
+Data source: Bluebikes System Data. (2026). [Bluebikes Comprehensive Trip Histories](https://bluebikes.com/system-data).
 :::
 
 ------------------------------------------------------------------------
 
-### Question 3 Combining and Mapping
+### Question 3: Combining and Mapping
 
-You are also provided a Bluebike station dataset `q3_bike_stations.xlsx`, which includes station names, ids, locations and total docks at each station.
+You are also provided a Bluebikes station dataset `q3_bike_stations.csv`, which includes station names (`NAME`), ids (`Number`), locations (`Lat`, `Long`), and total docks at each station.
 
--   Join your cleaned busiest-hour trip dataset (stations with more than 10 trips) with the station dataset. (2 points)
--   Use `sf` package, visualize these counts on a map using the stations' geographic locations to place points. (8 points).
+1.  Join your result from Q2.2 (end stations with more than 1 trip) with the station dataset, **matching on station id**. Your result should have 53 rows (2 points)
+
+2.  Using the `sf` package, map these trip counts using the stations' geographic locations. (8 points)
+
+    -   Remove any stations without valid location information (`Long`, or `Lat`) after the join.
+    -   Convert the joined data to an `sf` object.
+    -   Use point `size` to show **the number of trips ending at each station** (as one `aes()` argument).
     -   Use `q3_basemap.geojson` as your base map.
-    -   Use point `size` to indicate the number of trips per station.
-    -   Remove any stations without valid location information.
+    -   Include a title and a legend.
 
-Your maps may look similar to the following example, but [your actual results can be different]{.underline}. Your theme and color choice may also be different.
+Your map may look similar (but not the same!) as the following example. Your theme, color and text choices can be different.
 
-![](images/q3.png){width="700"}
+![](images/q3_example.png){width="700"}
 
 ::: footnote
-Data source:
-
-Bluebikes System Data. (2025). [Bluebikes Stations](https://bluebikes.com/system-data).
-
-Analyze Boston. (2025). [Boston neighborhood boundary](https://data.boston.gov/dataset/bpda-neighborhood-boundaries).
+Data source: Bluebikes System Data. (2026). [Bluebikes Stations](https://bluebikes.com/system-data). Analyze Boston. (2026). [Boston neighborhood boundary](https://data.boston.gov/dataset/bpda-neighborhood-boundaries).
 :::
 
 ------------------------------------------------------------------------
 
-### Question 4: Trouble-shooting
+### Question 4: Census Data Collection
 
-The following code are not running correctly. Can you help identify the issues and fix them? Please briefly list the problems you found and provide the corrected version of the code.
+In this question you will use the `tidycensus` package to collect American Community Survey (ACS) data. The following code is meant to download **the number of occupied housing units** and **renter-occupied housing units** for every **census tract in Middlesex County, Massachusetts**, from the most recent ACS 5-year estimates.
 
-1.  You want to get county-level ACS data (2019-2023) for calculating poverty rate in Massachusetts. Suppose `tidycensus` has been correctly loaded and `census_api_key` has been successfully run. (2.5 points).
+1.  Fill in the missing `variables` argument so the code runs correctly. Look for table `B25003`: Tenure. (4 points)
+2.  Using your result of API call, create a new column `rate` that equals renter-occupied housing units divided by total occupied housing units, so that we have renter rate for each tract. (6 points)
 
-```{verbatim}
-data <- get_acs(
+```{r}
+#| eval: false
+library(tidycensus)
+
+tenure <- get_acs(
+  geography = "tract",
   state = "MA",
-  geography = "county"
-  year = 2023,
-  table = c("B17001_002", "B17001_001")
+  county = "Middlesex",
+  variables = ,
+  year = 2024,
+  survey = "acs5"
 )
 ```
 
-2.  You want to obtain total population data for two counties in Massachusetts at the census block group level, using ACS data from 2019–2023. Suppose `tidycensus` has been correctly loaded and `census_api_key` has been successfully run. (2.5 points).
+<br><br>
 
-```{verbatim}
-data <- get_acs(
-  state = "MA",
-  county = c("Middlesex, Norfolk"),
-  geography = "blockgroups",
-  variables = c("B01001_001")
-)
-```
-
-3.  The `iris` data is a built-in dataset in R that records measurements of iris flowers, specifically the length and width of sepals and petals, along with their species. You are taking the two columns `Sepal.Length` and `Sepal.Width` to make a simple scatterplot. But the plot does not show. (2.5 points).
-
-```{verbatim}
-iris |> 
-  ggplot(x = Sepal.Length, y = Sepal.Width) |> 
-  geom_point(color = "red")
-```
-
-4.  Also in `iris` , you want to select "setosa" species that have a sepal length larger than 5. By looking at the dataset you know the first record satisfies this condition but the result does not show. (2.5 points).
-
-```{verbatim}
-iris |> filter(Sepal.Length > 5 AND Species = "setosa")
-```
-
-<br><br> ------------------------------------------------------------------------
+------------------------------------------------------------------------
 
 🎉**THIS IS THE END OF THE EXAM** 🎉

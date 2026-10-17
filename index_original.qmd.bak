@@ -1,0 +1,113 @@
+---
+title: "Exam Questions"
+author: "11.118/11.218 Fall 2025"
+date: "10/15/2025"
+format: 
+  html:
+    embed-resources: true
+editor: visual
+---
+
+::: instruction
+#### Instructions
+
+This exam has **4 questions, 10 points each**. All necessary data files for this exam are uploaded to Canvas. You will use Quarto (`.qmd`) document to work on the question. When you finish, please **upload both your `.qmd` and rendered `.html` files** to the **“Midterm Exam” assignment** submission link on Canvas.
+
+You have **90 minutes** to complete the exam, and practically: \[Group 1\] 9:35am – 11:05am; \[Group 2\] 11:05pm – 12:35pm.
+
+Start your work in a Quarto document. To ensure that your rendered HTML includes all image outputs, copy and edit the following into your YAML header:
+
+```{verbatim}
+title: "Exam Answers"
+author: "<Your Name>"
+format: 
+  html:
+    embed-resources: true
+execute: 
+  warning: false
+```
+
+For the questions, please write out all your code you used, and include a clear statement of your final answer to a question. If you didn't complete a section, describe your problem-solving approach instead, i.e. explain what you intended to do and your reasoning.
+:::
+
+### Question 1: Cleaning and Transforming
+
+forest area of 80 countries, the four columns
+
+1.  it shows each counties, multiple years, FILTER FOR Anogola, how many and which year to which year are reported, then filter for Belgium, how many years (1pts)
+
+<!-- -->
+
+2)  use one summary table to show Which countries have reports less than 31 years? (2pts)
+
+3)  For 2020 only, what the top 3 counties that have the largest (2pts)
+
+4)  (pivot_wider). Keep only 1990 and 2020 for countries, then make one column per year. (2pts)
+
+5)  (mutate after pivot). Using wide, compute the change from 1990 to 2020, remove countries with NA, and find the country with the biggest decrease. (3pts)
+
+You can complete these tasks in multiple steps or create intermediate results as needed.
+
+::: footnote
+Data source: Forests and Deforestation in [Our World in Data](https://ourworldindata.org/forests-and-deforestation). Adapted dataset from [TidyTuesday](https://github.com/cnicault/tidytuesday) [2021-15 Global Deforestation](https://github.com/cnicault/tidytuesday/tree/master/2021/2021-15-global_deforestation).
+:::
+
+------------------------------------------------------------------------
+
+### Question 2: Summarizing and Plotting
+
+**Q2.1:** Bluebikes is Metro Boston's public bike share program. You are given a Bluebikes ridership dataset `q2_bike_trips.csv`. Each row represents a single trip, including information on start time, end time, start station, and end station. The dataset covers trips taken on September 3, 2025, the first day of our fall semester.
+
+1.  Extract all trips starting at “MIT at Mass Ave / Amherst St” of this day. (1 points)
+
+2.  the started_at_hour and ended_at_hour are extracted, the hour from the acutal time. Use started——at_hour, Create a graph that shows the number of trips by hour of the selected station of this day, with two lines representing member users and casual users. (6 points).
+
+    Your maps may look similar (but not the same!) to the following example. Your theme and color choices can be different.
+
+**Q2.2:** With waht you have, the all trips starting at “MIT at Mass Ave / Amherst St” of this day
+
+1.  Create a table to show how many total trips ended at each station. In other words, count by “end_station_name”. (1 point)
+
+2.  Filter out all stations with more than 5 trips. (1 point) You will use this result for Q3.
+
+::: footnote
+Data source: Bluebikes System Data. (2025). [Bluebikes Comprehensive Trip Histories](https://bluebikes.com/system-data).
+:::
+
+------------------------------------------------------------------------
+
+### Question 3 Combining and Mapping
+
+You are also provided a Bluebike station dataset `q3_bike_stations.xlsx`, which includes station names, ids, locations and total docks at each station.
+
+-   Join your counts from Q2 (stations with more than 5 trips) with the station dataset. (2 points)
+-   Use `sf` package, visualize these counts on a map using the stations' geographic locations to place points. (8 points).
+    -   Use `q3_basemap.geojson` as your base map.
+    -   Use point `size` to indicate the number of trips per station.
+    -   Remove any stations without valid location information.
+
+Your maps may look similar (but not the same1) to the following example. Your theme and color choice may also be different.
+
+![](images/q3.png){width="700"}
+
+::: footnote
+Data source:
+
+Bluebikes System Data. (2025). [Bluebikes Stations](https://bluebikes.com/system-data).
+
+Analyze Boston. (2025). [Boston neighborhood boundary](https://data.boston.gov/dataset/bpda-neighborhood-boundaries).
+:::
+
+------------------------------------------------------------------------
+
+### Question 4: Census Data Collection
+
+The following code are not running correctly. Can you help identify the issues and fix them? Please briefly list the problems you found and provide the corrected version of the code.
+
+suggest what ACS data you will collect, fill in the following arguments,
+
+calculate rate as a new column
+
+<br><br> ------------------------------------------------------------------------
+
+🎉**THIS IS THE END OF THE EXAM** 🎉
