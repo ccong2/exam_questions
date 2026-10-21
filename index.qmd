@@ -47,9 +47,9 @@ Questions:
 
 3.  Back to the original table, for the year **2020** only, which **3 countries** have the largest forest area? (2 points)
 
-4.  Use the original table, keep only the years **1990 and 2020**, then use `pivot_wider()` to reshape the data so that each country is one row, with one column for 1990 forest area and one column for 2020 forest area. Your result should have 4 columns. Call this table `forest_wide`. (2.5 points)
+4.  Use the original table, keep only the years **1990 and 2020**, then use a `pivot` function to reshape the data so that each country is one row, with one column for 1990 forest area and one column for 2020 forest area. Call this table `forest_wide`. (2.5 points)
 
-5.  Using `forest_wide`, create a new column for the **change in forest area from 1990 to 2020**. Remove countries with a missing value (`NA`) in this column. Which country had the **largest decrease** in forest area during the 30 years? (2.5 points)
+5.  Using `forest_wide`, calculate the **change in forest area from 1990 to 2020**. Which country had the **largest decrease** in forest area during the 30 years? (2.5 points)
 
 ::: footnote
 Data source: Forests and Deforestation in [Our World in Data](https://ourworldindata.org/forests-and-deforestation). Adapted dataset from [TidyTuesday](https://github.com/cnicault/tidytuesday) [2021-15 Global Deforestation](https://github.com/cnicault/tidytuesday/tree/master/2021/2021-15-global_deforestation).
@@ -73,7 +73,7 @@ Your graph may look similar (but not the same!) as the following example. Your t
 
 **Q2.2** Continue using `mit_trips` (all trips that started at “MIT at Mass Ave / Amherst St”).
 
-1.  Create a table that shows how many trips **ended** at each station. In other words, count by `end_station_id`. Keep only the end stations with **more than 1 trip** (i.e., `n > 1`). You will use this result in Question 3. (2 point)
+1.  Create a table that shows how many trips **ended** at each station, by counting `end_station_id`. Keep only the end stations with **more than 1 trip** (i.e., `n > 1`). You will use this result in Question 3. (2 point)
 
 ::: footnote
 Data source: Bluebikes System Data. (2026). [Bluebikes Comprehensive Trip Histories](https://bluebikes.com/system-data).
@@ -85,7 +85,7 @@ Data source: Bluebikes System Data. (2026). [Bluebikes Comprehensive Trip Histor
 
 You are also provided a Bluebikes station dataset `q3_bike_stations.csv`, which includes station names (`NAME`), ids (`Number`), locations (`Lat`, `Long`), and total docks at each station.
 
-1.  Join your result from Q2.2 (end stations with more than 1 trip) with the station dataset, **matching on station id**. Your result should have 53 rows (2 points)
+1.  Join your result from Q2.2 (end stations with more than 1 trip) with the station dataset, matching on station id. Your result should have 53 rows (2 points)
 
 2.  Using the `sf` package, map these trip counts using the stations' geographic locations. (8 points)
 
@@ -110,7 +110,7 @@ Data source: Bluebikes System Data. (2026). [Bluebikes Stations](https://bluebik
 In this question you will use the `tidycensus` package to collect American Community Survey (ACS) data. The following code is meant to download **the number of occupied housing units** and **renter-occupied housing units** for every **census tract in Middlesex County, Massachusetts**, from the most recent ACS 5-year estimates.
 
 1.  Fill in the missing `variables` argument so the code runs correctly. Look for table `B25003`: Tenure. (4 points)
-2.  Using your result of API call, create a new column `rate` that equals renter-occupied housing units divided by total occupied housing units, so that we have renter rate for each tract. (6 points)
+2.  Using your result of API call, calculate `rate` that equals renter-occupied housing units divided by total occupied housing units, so that we have renter rate for each tract. (6 points)
 
 ```{r}
 #| eval: false
