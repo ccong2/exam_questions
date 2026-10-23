@@ -1,0 +1,198 @@
+---
+title: "Exam Answer Key"
+format:
+  html:
+    embed-resources: true
+execute:
+  warning: false
+---
+
+```{r}
+#| message: false
+library(tidyverse)
+library(sf)
+```
+
+## **Question 1: Cleaning and Transforming**
+
+```{r}
+#| message: false
+forest <- read_csv("data/q1_forest_area.csv")
+```
+
+### **Q1.1 Years of records for Angola and Belgium**
+
+> Angola has **31** years of records, from **1990 to 2020**. Belgium has **21** years of records, from **2000 to 2020**.
+
+```{r}
+forest |> filter(country == "Angola") 
+forest |> filter(country == "Belgium") 
+```
+
+### **Q1.2 Countries with fewer than 31 years of records**
+
+> **8** countries: Belarus, Belgium, Ethiopia, Russia, South Sudan, Sudan, Turkmenistan, Ukraine.
+
+```{r}
+# Count records (years) by country
+forest |> 
+  count(country) |> 
+  filter(n < 31)
+```
+
+### **Q1.3 Top 3 countries by forest area in 2020**
+
+> **Russia, Brazil, Canada**
+
+```{r}
+forest |>
+  filter(year == 2020) |>
+  arrange(desc(forest_area_ha)) 
+```
+
+### **Q1.4 Pivot wider for 1990 and 2020**
+
+`forest_wide` has 80 rows and 4 columns: `country`, `code`, `1990`, `2020`.
+
+```{r}
+forest_wide <-
+  forest |>
+  filter(year == 2020 | year == 1990) |>
+  pivot_wider(names_from = year, values_from = forest_area_ha)
+
+forest_wide
+```
+
+### **Q1.5 Largest decrease from 1990 to 2020**
+
+> **Brazil**, with a decrease of about **94.2 million hectares**.
+
+```{r}
+# Column names starting with a number need backticks
+forest_wide |>
+  mutate(change = `2020` - `1990`) |>
+  filter(!is.na(change)) |>
+  arrange(change)
+```
+
+## **Question 2: Summarizing and Plotting**
+
+```{r}
+#| message: false
+biketrips <- read_csv("data/q2_bike_trips.csv")
+```
+
+### **Q2.1 Trips by hour at MIT at Mass Ave / Amherst St**
+
+There are **355** trips starting at this station.
+
+```{r}
+mit_trips <-
+  biketrips |>
+  filter(start_station_name == "MIT at Mass Ave / Amherst St")
+```
+
+```{r}
+mit_trips |>
+  count(started_hour, member_casual) |>
+  ggplot() +
+  geom_line(aes(x = started_hour, y = n, color = member_casual)) +
+  scale_x_continuous(breaks = seq(0, 23, 1))+
+  labs(x = "Hour", y = "Number of Trips Started", color = "Rider Type",
+       title = "All Trips from MIT at Mass Ave / Amherst St",
+       subtitle = "September 9, 2026") +
+  theme_minimal()
+```
+
+### **Q2.2 Count trips by end station, filter \>1**
+
+**53** end stations have more than 1 trip.
+
+```{r}
+mit_end <-
+  mit_trips |>
+  count(end_station_id) |>
+  filter(n > 1)
+```
+
+## **Question 3 Combining and Mapping**
+
+```{r}
+#| message: false
+#| results: hide
+station <- read_csv("data/q3_bike_stations.csv")
+basemap <- st_read("data/q3_basemap.geojson")
+```
+
+**1** Join trips by station id
+
+```{r}
+# Join trips by end station to the station data
+station_joined <-
+  left_join(mit_end, station,
+            by = c("end_station_id" = "Number"))
+```
+
+**2** Convert to spatial data
+
+```{r}
+# Remove stations without valid location, then convert to spatial data
+station_sf <-
+  station_joined |>
+  filter(!is.na(Long)) |>
+  st_as_sf(coords = c("Long", "Lat"), crs = 4326)
+```
+
+**3** Map
+
+```{r}
+ggplot() +
+  geom_sf(data = basemap, fill = "white")+
+  geom_sf(data = station_sf, aes(size = n), color = "red", alpha = 0.4)+
+    labs(size = "Trip Count",
+         title = "All Trips from MIT at Mass Ave / Amherst St",
+         subtitle = "End stations with more than 1 trip, September 9, 2026")+
+  theme_void()
+```
+
+## **Question 4: Census Data Collection**
+
+**Q4.1** Fill in `variables` with total occupied housing units (`B25003_001`) and renter-occupied housing units (`B25003_003`). Naming the variables is optional but makes the next step easier.
+
+```{r}
+#| eval: false
+library(tidycensus)
+
+tenure <- get_acs(
+  geography = "tract",
+  state = "MA",
+  county = "Middlesex",
+  variables = c(total = "B25003_001", renter = "B25003_003"),
+  year = 2024,
+  survey = "acs5"
+)
+```
+
+**Q4.2** Add `output = "wide"` to `get_acs()` and use `renterE / totalE` directly. Alternatively, pivot to wide before dividing.
+
+```{r}
+#| eval: false
+# Option 1 Add output = "wide
+tenure_rate <- 
+  get_acs(
+    geography = "tract",
+    state = "MA",
+    county = "Middlesex",
+    variables = c(total = "B25003_001", renter = "B25003_003"),
+    year = 2024,
+    survey = "acs5",
+    output = "wide") |> 
+  mutate(rate = renterE / totalE)
+
+# Option 2 Pivot to wide before dividing
+tenure_rate <-
+  tenure |>
+  select(GEOID, NAME, variable, estimate) |>
+  pivot_wider(names_from = variable, values_from = estimate) |>
+  mutate(rate = renter / total)
+```
